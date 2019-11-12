@@ -19,6 +19,7 @@ const comboboxItems = starWarsNames.all.sort((a, b) => {
   if (nameA < nameB) {
     return -1
   }
+
   if (nameA > nameB) {
     return 1
   }
@@ -172,6 +173,29 @@ storiesOf('dialog', module)
           <Box marginBottom={16}>
             <Dialog
               isShown={isShown}
+              hasClose={false}
+              shouldCloseOnOverlayClick={false}
+              shouldCloseOnEscapePress={false}
+              onCloseComplete={hide}
+            >
+              {({ close }) => (
+                <Box>
+                  Modal Dialog
+                  <Button marginTop={16} onClick={close}>
+                    Self Managed Close
+                  </Button>
+                </Box>
+              )}
+            </Dialog>
+            <Button onClick={show}>Show Modal Dialog without Close</Button>
+          </Box>
+        )}
+      </DialogManager>
+      <DialogManager>
+        {({ isShown, show, hide }) => (
+          <Box marginBottom={16}>
+            <Dialog
+              isShown={isShown}
               title="Dialog with Internal Scrolling"
               onCloseComplete={hide}
             >
@@ -188,7 +212,7 @@ storiesOf('dialog', module)
               isShown={isShown}
               shouldCloseOnOverlayClick={false}
               shouldCloseOnEscapePress={false}
-              title="Dialog with Internal Scrolling"
+              title="Dialog with overlay and escape key disabled"
               onCloseComplete={hide}
               onCancel={close => {
                 console.log('You canceled')

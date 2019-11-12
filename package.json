@@ -1,6 +1,6 @@
 {
   "name": "evergreen-ui",
-  "version": "4.11.3",
+  "version": "4.21.5",
   "description": "🌲 React UI Kit by Segment 🌲",
   "contributors": [
     "Jeroen Ransijn (https://jssr.design/)",
@@ -17,9 +17,11 @@
   "license": "MIT",
   "main": "commonjs/index.js",
   "module": "esm/index.js",
+  "types": "index.d.ts",
   "files": [
     "commonjs",
-    "esm"
+    "esm",
+    "index.d.ts"
   ],
   "sideEffects": false,
   "scripts": {
@@ -33,7 +35,9 @@
     "build-esm": "BABEL_ENV=esm babel src --out-dir esm --ignore '**/stories','**/test' --source-maps inline",
     "build": "concurrently --names 'commonjs,esm' 'yarn run build-commonjs' 'yarn run build-esm'",
     "clean": "git clean -Xdf",
-    "release": "np --no-publish",
+    "release": "np",
+    "deploy-docs": "cd docs && yarn install && yarn deploy",
+    "postpublish": "yarn deploy-docs",
     "chromatic": "chromatic test --storybook-addon --script-name dev --app-code=alj8xoz1ujt"
   },
   "engines": {
@@ -42,10 +46,11 @@
   "dependencies": {
     "@babel/runtime": "^7.1.2",
     "@blueprintjs/icons": "^3.2.0",
+    "@types/react": "^16.9.5",
     "arrify": "^1.0.1",
     "classnames": "^2.2.6",
     "dom-helpers": "^3.2.1",
-    "downshift": "^1.31.16",
+    "downshift": "^3.3.1",
     "fuzzaldrin-plus": "^0.6.0",
     "glamor": "^2.20.40",
     "lodash.debounce": "^4.0.8",
@@ -55,11 +60,11 @@
     "react-tiny-virtual-list": "^2.1.4",
     "react-transition-group": "^2.5.0",
     "tinycolor2": "^1.4.1",
-    "ui-box": "^1.4.0"
+    "ui-box": "^2.1.2"
   },
   "peerDependencies": {
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0"
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -75,7 +80,7 @@
     "@storybook/addon-options": "^3.4.11",
     "@storybook/addons": "^3.4.11",
     "@storybook/react": "^3.4.11",
-    "ava": "1.0.0-rc.1",
+    "ava": "^1.3.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-add-react-displayname": "^0.0.5",
@@ -91,16 +96,17 @@
     "fs-extra": "^7.0.0",
     "husky": "^1.1.2",
     "lint-staged": "^7.3.0",
+    "np": "^4.0.2",
     "prettier": "^1.14.3",
     "react": "^16.5.2",
     "react-chromatic": "^0.8.4",
     "react-dom": "^16.5.2",
     "react-test-renderer": "^16.5.2",
     "sinon": "^7.0.0",
-    "size-limit": "^0.20.1",
+    "size-limit": "^0.21.1",
     "starwars-names": "^1.6.0",
     "url-loader": "^1.1.2",
-    "xo": "^0.23.0"
+    "xo": "^0.24.0"
   },
   "xo": {
     "parser": "babel-eslint",
@@ -176,7 +182,7 @@
   "size-limit": [
     {
       "path": "commonjs/index.js",
-      "limit": "204 KB"
+      "limit": "212 KB"
     }
   ],
   "husky": {

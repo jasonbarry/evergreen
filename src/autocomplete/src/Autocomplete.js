@@ -7,9 +7,27 @@ import { Popover } from '../../popover'
 import { Position } from '../../constants'
 import { Heading } from '../../typography'
 import { Pane } from '../../layers'
+import deprecated from '../../lib/deprecated'
 import AutocompleteItem from './AutocompleteItem'
 
-const fuzzyFilter = (items, input) => fuzzaldrin.filter(items, input)
+const fuzzyFilter = itemToString => {
+  if (itemToString) {
+    return (items, input) => {
+      const wrappedItems = items.map(item => ({
+        key: itemToString(item),
+        item
+      }))
+
+      return fuzzaldrin
+        .filter(wrappedItems, input, { key: 'key' })
+        .map(({ item }) => item)
+    }
+  }
+
+  return (items, input) => fuzzaldrin.filter(items, input)
+}
+
+const noop = () => {}
 
 const autocompleteItemRenderer = props => <AutocompleteItem {...props} />
 
@@ -33,9 +51,20 @@ export default class Autocomplete extends PureComponent {
     selectedItem: PropTypes.any,
 
     /**
-     * The selected item to be selected & shown by default on the autocomplete
+     * The selected item to be selected & shown by default on the autocomplete (deprecated)
      */
-    defaultSelectedItem: PropTypes.any,
+    defaultSelectedItem: deprecated(
+      PropTypes.any,
+      'Use "initialSelectedItem" instead.'
+    ),
+
+    /**
+     * The selected item to be selected & shown by default on the autocomplete (deprecated)
+     */
+    defaultInputValue: deprecated(
+      PropTypes.any,
+      'Use "initialInputValue" instead.'
+    ),
 
     /**
      * In case the array of items is not an array of strings,
@@ -88,6 +117,14 @@ export default class Autocomplete extends PureComponent {
      */
     popoverMaxHeight: PropTypes.number,
 
+    /**
+     * The selected item to be selected & shown by default on the autocomplete (deprecated)
+     */
+    getButtonProps: deprecated(
+      PropTypes.func,
+      'Use "getToggleButtonProps" instead.'
+    ),
+
     ...Downshift.propTypes
   }
 
@@ -98,7 +135,6 @@ export default class Autocomplete extends PureComponent {
   static defaultProps = {
     itemToString: i => (i ? String(i) : ''),
     itemSize: 32,
-    itemsFilter: fuzzyFilter,
     isFilterDisabled: false,
     popoverMinWidth: 240,
     popoverMaxHeight: 240,
@@ -109,6 +145,22 @@ export default class Autocomplete extends PureComponent {
     this.setState({
       targetWidth: this.targetRef.getBoundingClientRect().width
     })
+  }
+
+  stateReducer = (state, changes) => {
+    const { items } = this.props
+
+    if (
+      Object.prototype.hasOwnProperty.call(changes, 'isOpen') &&
+      changes.isOpen
+    ) {
+      return {
+        ...changes,
+        highlightedIndex: items.indexOf(state.selectedItem)
+      }
+    }
+
+    return changes
   }
 
   renderResults = ({
@@ -130,10 +182,11 @@ export default class Autocomplete extends PureComponent {
       isFilterDisabled
     } = this.props
 
+    const filter = itemsFilter || fuzzyFilter(itemToString)
     const items =
       isFilterDisabled || inputValue.trim() === ''
         ? originalItems
-        : itemsFilter(originalItems, inputValue)
+        : filter(originalItems, inputValue)
 
     if (items.length === 0) return null
 
@@ -156,6 +209,10 @@ export default class Autocomplete extends PureComponent {
             renderItem={({ index, style }) => {
               const item = items[index]
               const itemString = itemToString(item)
+              const onSelect = () => {
+                selectItemAtIndex(index)
+              }
+
               return renderItem(
                 getItemProps({
                   item,
@@ -163,9 +220,8 @@ export default class Autocomplete extends PureComponent {
                   index,
                   style,
                   children: itemString,
-                  onMouseUp: () => {
-                    selectItemAtIndex(index)
-                  },
+                  onMouseUp: onSelect,
+                  onTouchEnd: onSelect,
                   isSelected: itemToString(selectedItem) === itemString,
                   isHighlighted: highlightedIndex === index
                 })
@@ -186,12 +242,24 @@ export default class Autocomplete extends PureComponent {
       itemsFilter,
       popoverMaxHeight,
       popoverMinWidth,
-      defaultSelectedItem,
+      defaultSelectedItem, // Deprecated
+      initialSelectedItem,
+      defaultInputValue, // Deprecated
+      initialInputValue,
+      getButtonProps, // Deprecated
+      getToggleButtonProps,
       ...props
     } = this.props
 
     return (
-      <Downshift defaultSelectedItem={defaultSelectedItem} {...props}>
+      <Downshift
+        initialSelectedItem={initialSelectedItem || defaultSelectedItem}
+        initialInputValue={initialInputValue || defaultInputValue}
+        getToggleButtonProps={getToggleButtonProps || getButtonProps}
+        stateReducer={this.stateReducer}
+        scrollIntoView={noop}
+        {...props}
+      >
         {({
           isOpen: isShown,
           inputValue,

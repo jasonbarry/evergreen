@@ -13,7 +13,9 @@ import Option from './Option'
  * @param options <Array[String]> - ['label', 'label2', ...]
  * @param input <String>
  */
-const fuzzyFilter = (options, input) => fuzzaldrin.filter(options, input)
+const fuzzyFilter = (options, input, { key }) => {
+  return fuzzaldrin.filter(options, input, { key })
+}
 
 /**
  * This is the default item renderer of options
@@ -34,16 +36,24 @@ export default class OptionsList extends PureComponent {
     isMultiSelect: PropTypes.bool,
 
     /**
+     * When true, menu closes on option selection.
+     */
+    closeOnSelect: PropTypes.bool,
+
+    /**
      * This holds the values of the options
      */
-    selected: PropTypes.arrayOf(PropTypes.string),
+    selected: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
     onSelect: PropTypes.func,
     onDeselect: PropTypes.func,
     onFilterChange: PropTypes.func,
     hasFilter: PropTypes.bool,
     optionSize: PropTypes.number,
     renderItem: PropTypes.func,
-    placeholder: PropTypes.string,
+    filterPlaceholder: PropTypes.string,
+    filterIcon: PropTypes.string,
     optionsFilter: PropTypes.func,
     defaultSearchValue: PropTypes.string
   }
@@ -61,8 +71,8 @@ export default class OptionsList extends PureComponent {
     onFilterChange: () => {},
     selected: [],
     renderItem: itemRenderer,
-    optionsFilter: fuzzyFilter,
-    placeholder: 'Filter...',
+    filterPlaceholder: 'Filter...',
+    filterIcon: 'search',
     defaultSearchValue: ''
   }
 
@@ -112,14 +122,18 @@ export default class OptionsList extends PureComponent {
     const { optionsFilter } = this.props
     const { searchValue } = this.state
 
-    return searchValue.trim() === ''
-      ? options // Return if no search query
-      : optionsFilter(
-          options.map(item => item.labelInList || item.label),
-          searchValue
-        ).map(name =>
-          options.find(item => item.labelInList === name || item.label === name)
-        )
+    if (searchValue.trim() === '') {
+      return options
+    }
+
+    // Preserve backwards compatibility with allowing custom filters, which accept array of strings
+    if (typeof optionsFilter === 'function') {
+      return optionsFilter(options.map(item => item.label), searchValue).map(
+        name => options.find(item => item.label === name)
+      )
+    }
+
+    return fuzzyFilter(options, searchValue, { key: 'label' })
   }
 
   getCurrentIndex = () => {
@@ -194,6 +208,9 @@ export default class OptionsList extends PureComponent {
 
   handleSelect = item => {
     this.props.onSelect(item)
+    if (!this.props.isMultiSelect && this.props.closeOnSelect) {
+      this.props.close()
+    }
   }
 
   handleDeselect = item => {
@@ -208,6 +225,7 @@ export default class OptionsList extends PureComponent {
     const {
       options: originalOptions,
       close,
+      closeOnSelect,
       width,
       height,
       onSelect,
@@ -215,9 +233,10 @@ export default class OptionsList extends PureComponent {
       onFilterChange,
       selected,
       hasFilter,
+      filterPlaceholder,
+      filterIcon,
       optionSize,
       renderItem,
-      placeholder,
       optionsFilter,
       isMultiSelect,
       defaultSearchValue,
@@ -243,6 +262,8 @@ export default class OptionsList extends PureComponent {
               innerRef={this.assignSearchRef}
               borderRight={null}
               height={32}
+              placeholder={filterPlaceholder}
+              icon={filterIcon}
             />
           </TableHead>
         )}
@@ -254,17 +275,14 @@ export default class OptionsList extends PureComponent {
             itemCount={options.length}
             overscanCount={20}
             scrollToAlignment="auto"
-            {...(scrollToIndex
-              ? {
-                  scrollToIndex
-                }
-              : {})}
+            scrollToIndex={scrollToIndex || undefined}
             renderItem={({ index, style }) => {
               const item = options[index]
               const isSelected = this.isSelected(item)
               return renderItem({
                 key: item.value,
                 label: item.label,
+                icon: item.icon,
                 style,
                 height: optionSize,
                 onSelect: () => this.handleSelect(item),

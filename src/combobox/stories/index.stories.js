@@ -13,6 +13,7 @@ const items = starWarsNames.all.sort((a, b) => {
   if (nameA < nameB) {
     return -1
   }
+
   if (nameA > nameB) {
     return 1
   }
@@ -51,7 +52,7 @@ storiesOf('combobox', module).add('Combobox', () => (
     <Box marginBottom={16}>
       <Heading>Default value</Heading>
       <Combobox
-        defaultSelectedItem="Yoda"
+        initialSelectedItem="Yoda"
         items={items}
         onChange={handleChange}
       />
@@ -59,9 +60,9 @@ storiesOf('combobox', module).add('Combobox', () => (
     <Box marginBottom={16}>
       <Heading>Custom item objects</Heading>
       <Combobox
-        defaultSelectedItem={customItems[0]}
+        initialSelectedItem={customItems[0]}
         items={customItems}
-        itemToString={i => i.label}
+        itemToString={i => (i ? i.label : '')}
         onChange={handleChange}
       />
     </Box>
@@ -80,9 +81,9 @@ storiesOf('combobox', module).add('Combobox', () => (
       <Pane display="flex" background="tint1" padding={16}>
         <Combobox
           width="100%"
-          defaultSelectedItem={customItems[0]}
+          initialSelectedItem={customItems[0]}
           items={customItems}
-          itemToString={i => i.label}
+          itemToString={i => (i ? i.label : '')}
           onChange={handleChange}
         />
       </Pane>
@@ -91,9 +92,9 @@ storiesOf('combobox', module).add('Combobox', () => (
       <Pane display="flex" background="tint2" width="75%" padding={16}>
         <Combobox
           width="100%"
-          defaultSelectedItem={customItems[0]}
+          initialSelectedItem={customItems[0]}
           items={customItems}
-          itemToString={i => i.label}
+          itemToString={i => (i ? i.label : '')}
           onChange={handleChange}
         />
       </Pane>
@@ -109,9 +110,9 @@ storiesOf('combobox', module).add('Combobox', () => (
       >
         <Combobox
           width="100%"
-          defaultSelectedItem={customItems[0]}
+          initialSelectedItem={customItems[0]}
           items={customItems}
-          itemToString={i => i.label}
+          itemToString={i => (i ? i.label : '')}
           onChange={handleChange}
         />
       </Pane>

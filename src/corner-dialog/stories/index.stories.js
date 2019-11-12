@@ -1,9 +1,10 @@
 import { storiesOf } from '@storybook/react'
 import React from 'react'
 import Box from 'ui-box'
-import { CornerDialog } from '..'
 import { Button } from '../../buttons'
 import { Manager } from '../../manager'
+import positions from '../../constants/src/Position'
+import { CornerDialog } from '..'
 
 storiesOf('corner-dialog', module).add('CornerDialog', () => (
   <Box padding={40}>
@@ -56,12 +57,112 @@ storiesOf('corner-dialog', module).add('CornerDialog', () => (
             confirmLabel="View Agreement"
             onCloseComplete={() => setState({ isShown: false })}
           >
-            Segment now offers a Data Processing Agreement and EU Model
-            Contract Clauses as a means of meeting the adequacy and security
-            requirements of the GDPR.
+            Segment now offers a Data Processing Agreement and EU Model Contract
+            Clauses as a means of meeting the adequacy and security requirements
+            of the GDPR.
           </CornerDialog>
           <Button onClick={() => setState({ isShown: true })}>
             Show “GDPR” Corner Dialog
+          </Button>
+        </Box>
+      )}
+    </Manager>
+    <Manager isShown={false}>
+      {({ state, setState }) => (
+        <Box marginTop={24}>
+          <CornerDialog
+            title="Please Read License Terms"
+            isShown={state.isShown}
+            hasClose={false}
+            hasCancel={false}
+            width={492}
+            confirmLabel="View Terms"
+            onCloseComplete={() => setState({ isShown: false })}
+          >
+            MIT License
+          </CornerDialog>
+          <Button onClick={() => setState({ isShown: true })}>
+            Show License Terms Dialog
+          </Button>
+        </Box>
+      )}
+    </Manager>
+    <Manager isShown={false}>
+      {({ state, setState }) => (
+        <Box marginTop={24}>
+          <CornerDialog
+            title="Please Read License Terms"
+            isShown={state.isShown}
+            hasClose={false}
+            hasCancel={false}
+            width={492}
+            confirmLabel="View Terms"
+            onCloseComplete={() => setState({ isShown: false })}
+            position={positions.TOP_LEFT}
+          >
+            MIT License
+          </CornerDialog>
+          <Button onClick={() => setState({ isShown: true })}>Top left</Button>
+        </Box>
+      )}
+    </Manager>
+    <Manager isShown={false}>
+      {({ state, setState }) => (
+        <Box marginTop={24}>
+          <CornerDialog
+            title="Please Read License Terms"
+            isShown={state.isShown}
+            hasClose={false}
+            hasCancel={false}
+            width={492}
+            confirmLabel="View Terms"
+            onCloseComplete={() => setState({ isShown: false })}
+            position={positions.TOP_RIGHT}
+          >
+            MIT License
+          </CornerDialog>
+          <Button onClick={() => setState({ isShown: true })}>Top right</Button>
+        </Box>
+      )}
+    </Manager>
+    <Manager isShown={false}>
+      {({ state, setState }) => (
+        <Box marginTop={24}>
+          <CornerDialog
+            title="Please Read License Terms"
+            isShown={state.isShown}
+            hasClose={false}
+            hasCancel={false}
+            width={492}
+            confirmLabel="View Terms"
+            onCloseComplete={() => setState({ isShown: false })}
+            position={positions.BOTTOM_RIGHT}
+          >
+            MIT License
+          </CornerDialog>
+          <Button onClick={() => setState({ isShown: true })}>
+            Bottom right
+          </Button>
+        </Box>
+      )}
+    </Manager>
+    <Manager isShown={false}>
+      {({ state, setState }) => (
+        <Box marginTop={24}>
+          <CornerDialog
+            title="Please Read License Terms"
+            isShown={state.isShown}
+            hasClose={false}
+            hasCancel={false}
+            width={492}
+            confirmLabel="View Terms"
+            onCloseComplete={() => setState({ isShown: false })}
+            position={positions.BOTTOM_LEFT}
+          >
+            MIT License
+          </CornerDialog>
+          <Button onClick={() => setState({ isShown: true })}>
+            Bottom left
           </Button>
         </Box>
       )}

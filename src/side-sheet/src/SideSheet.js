@@ -1,6 +1,6 @@
+import { css } from 'glamor'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { css } from 'ui-box'
 import { Pane } from '../../layers'
 import { Overlay } from '../../overlay'
 import { Position } from '../../constants'
@@ -74,7 +74,7 @@ const withAnimations = (animateIn, animateOut) => {
   }
 }
 
-const animationStyles = {
+const animationStylesClass = {
   [Position.LEFT]: {
     transform: `translateX(-100%)`,
     ...withAnimations(
@@ -232,7 +232,7 @@ class SideSheet extends React.Component {
           <Pane
             width={width}
             {...paneProps[position]}
-            css={animationStyles[position]}
+            css={animationStylesClass[position]}
             data-state={state}
           >
             <SheetClose

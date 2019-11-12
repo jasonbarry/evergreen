@@ -104,7 +104,7 @@ Below you can read a description of each script.
 
 - `yarn clean`: removes all untracked files (`git clean -Xdf`).
 
-- `yarn release`: Releases new version of Evergreen (requires `np` to be installed globally).
+- `yarn release`: Releases new version of Evergreen (requires MFA via npm as a collaborator)
 
 - `yarn create-package`: This command scaffolds a package with no specific boilerplate. It's useful for creating utilities.
 
@@ -142,6 +142,19 @@ The following file tree will be generated:
 ├── /stories/
 │   └── index.stories.js
 └── index.js
+```
+
+### 📖 Step 3. Run evergreen docs locally
+
+Evergreen docs depends on main lib built.
+
+Run the following commands to run it in your local:
+
+```
+$ yarn build
+$ cd docs
+$ yarn install
+$ yarn dev
 ```
 
 ## 🎉 Contributors

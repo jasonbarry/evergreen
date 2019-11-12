@@ -15,11 +15,12 @@ export default class Toaster {
 
     const container = document.createElement('div')
     container.setAttribute('data-evergreen-toaster-container', '')
-    document.body.appendChild(container)
+    document.body.append(container)
 
     ReactDOM.render(
       <ToastManager
         bindNotify={this._bindNotify}
+        bindRemove={this._bindRemove}
         bindGetToasts={this._bindGetToasts}
         bindCloseAll={this._bindCloseAll}
       />,
@@ -29,6 +30,10 @@ export default class Toaster {
 
   _bindNotify = handler => {
     this.notifyHandler = handler
+  }
+
+  _bindRemove = handler => {
+    this.removeHandler = handler
   }
 
   _bindGetToasts = handler => {
@@ -61,5 +66,9 @@ export default class Toaster {
 
   danger = (title, settings = {}) => {
     return this.notifyHandler(title, { ...settings, intent: 'danger' })
+  }
+
+  remove = id => {
+    return this.removeHandler(id)
   }
 }

@@ -36,7 +36,7 @@ class Icon extends PureComponent {
      *   This type is supported to simplify usage of this component in other Blueprint components.
      *   As a consumer, you should never use `<Icon icon={<element />}` directly; simply render `<element />` instead.
      */
-    icon: PropTypes.string.isRequired,
+    icon: PropTypes.node.isRequired,
 
     /**
      * Size of the icon, in pixels.
@@ -82,12 +82,13 @@ class Icon extends PureComponent {
   }
 
   render() {
-    const { theme, color, icon, size, title = icon, ...svgProps } = this.props
+    const { theme, color, icon, size, title, ...svgProps } = this.props
     let { style = {} } = this.props
 
     if (icon == null) {
       return null
     }
+
     if (typeof icon !== 'string') {
       return icon
     }

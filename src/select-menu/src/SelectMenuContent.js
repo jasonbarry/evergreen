@@ -31,12 +31,14 @@ export default class SelectMenuContent extends PureComponent {
   static propTypes = {
     close: PropTypes.func,
     title: PropTypes.string,
-    width: PropTypes.number,
-    height: PropTypes.number,
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     headerHeight: PropTypes.number,
     options: PropTypes.arrayOf(OptionShapePropType),
     hasTitle: PropTypes.bool,
     hasFilter: PropTypes.bool,
+    filterPlaceholder: PropTypes.string,
+    filterIcon: PropTypes.string,
     listProps: PropTypes.shape(OptionsList.propTypes),
 
     /**
@@ -44,10 +46,15 @@ export default class SelectMenuContent extends PureComponent {
      */
     isMultiSelect: PropTypes.bool,
 
+    /*
+     * When true, menu closes on option selection.
+     */
+    closeOnSelect: PropTypes.bool,
+
     /**
      * Node that is placed in the header section, above the options.
      */
-    titleView: PropTypes.node,
+    titleView: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
 
     /**
      * Node that is placed right next to the options.
@@ -75,12 +82,15 @@ export default class SelectMenuContent extends PureComponent {
       options,
       hasTitle,
       hasFilter,
+      filterPlaceholder,
+      filterIcon,
       close,
       listProps,
       titleView,
       detailView,
       emptyView,
-      isMultiSelect
+      isMultiSelect,
+      closeOnSelect
     } = this.props
 
     const headerHeight = 40
@@ -105,9 +115,12 @@ export default class SelectMenuContent extends PureComponent {
             <OptionsList
               height={optionsListHeight}
               hasFilter={hasFilter}
+              filterPlaceholder={filterPlaceholder}
+              filterIcon={filterIcon}
               options={options}
               isMultiSelect={isMultiSelect}
               close={close}
+              closeOnSelect={closeOnSelect}
               {...listProps}
             />
           )}

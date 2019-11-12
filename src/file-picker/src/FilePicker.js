@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Box from 'ui-box'
 import { Button } from '../../buttons'
 import { TextInput } from '../../text-input'
+import safeInvoke from '../../lib/safe-invoke'
 
 export const CLASS_PREFIX = 'evergreen-file-picker'
 
@@ -49,7 +50,21 @@ export default class FilePicker extends PureComponent {
     /**
      * Function called when onChange is fired
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+
+    /**
+     * Function called when onBlur is fired
+     */
+    onBlur: PropTypes.func,
+
+    /**
+     * Placeholder of the text input
+     */
+    placeholder: PropTypes.string
+  }
+
+  static defaultProps = {
+    placeholder: 'Select a file to upload…'
   }
 
   constructor() {
@@ -70,6 +85,7 @@ export default class FilePicker extends PureComponent {
       capture,
       height,
       onChange, // Remove onChange from props
+      placeholder,
       ...props
     } = this.props
     const { files } = this.state
@@ -113,13 +129,14 @@ export default class FilePicker extends PureComponent {
           className={`${CLASS_PREFIX}-text-input`}
           readOnly
           value={inputValue}
-          placeholder="Select a file to upload…"
+          placeholder={placeholder}
           // There's a weird specifity issue when there's two differently sized inputs on the page
           borderTopRightRadius="0 !important"
           borderBottomRightRadius="0 !important"
           height={height}
           flex={1}
           textOverflow="ellipsis"
+          onBlur={this.handleBlur}
         />
 
         <Button
@@ -131,6 +148,7 @@ export default class FilePicker extends PureComponent {
           height={height}
           flexShrink={0}
           type="button"
+          onBlur={this.handleBlur}
         >
           {buttonText}
         </Button>
@@ -143,18 +161,20 @@ export default class FilePicker extends PureComponent {
   }
 
   handleFileChange = e => {
-    const { onChange } = this.props
     // Firefox returns the same array instance each time for some reason
     const files = [...e.target.files]
 
     this.setState({ files })
 
-    if (onChange) {
-      onChange(files)
-    }
+    safeInvoke(this.props.onChange, files)
   }
 
   handleButtonClick = () => {
     this.fileInput.click()
+  }
+
+  handleBlur = e => {
+    if (e && e.target) e.target.files = this.state.files
+    safeInvoke(this.props.onBlur, e)
   }
 }

@@ -1,6 +1,6 @@
+import { css } from 'glamor'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { css } from 'ui-box'
 import { Pane } from '../../layers'
 import { Paragraph, Heading } from '../../typography'
 import { Overlay } from '../../overlay'
@@ -87,6 +87,11 @@ class Dialog extends React.Component {
      * When true, the cancel button is shown.
      */
     hasCancel: PropTypes.bool,
+
+    /**
+     * When true, the close button is shown
+     */
+    hasClose: PropTypes.bool,
 
     /**
      * Function that will be called when the exit transition is complete.
@@ -182,12 +187,18 @@ class Dialog extends React.Component {
     /**
      * Whether or not to prevent scrolling in the outer body
      */
-    preventBodyScrolling: PropTypes.bool
+    preventBodyScrolling: PropTypes.bool,
+
+    /**
+     * Props that are passed to the Overlay component.
+     */
+    overlayProps: PropTypes.object
   }
 
   static defaultProps = {
     isShown: false,
     hasHeader: true,
+    hasClose: true,
     hasFooter: true,
     hasCancel: true,
     intent: 'none',
@@ -203,7 +214,8 @@ class Dialog extends React.Component {
     shouldCloseOnEscapePress: true,
     onCancel: close => close(),
     onConfirm: close => close(),
-    preventBodyScrolling: false
+    preventBodyScrolling: false,
+    overlayProps: {}
   }
 
   renderChildren = close => {
@@ -212,9 +224,11 @@ class Dialog extends React.Component {
     if (typeof children === 'function') {
       return children({ close })
     }
+
     if (typeof children === 'string') {
       return <Paragraph>{children}</Paragraph>
     }
+
     return children
   }
 
@@ -227,6 +241,7 @@ class Dialog extends React.Component {
       topOffset,
       sideOffset,
       hasHeader,
+      hasClose,
       hasFooter,
       hasCancel,
       onCloseComplete,
@@ -239,10 +254,11 @@ class Dialog extends React.Component {
       cancelLabel,
       shouldCloseOnOverlayClick,
       shouldCloseOnEscapePress,
-      containerProps,
+      containerProps = {},
       contentContainerProps,
       minHeightContent,
-      preventBodyScrolling
+      preventBodyScrolling,
+      overlayProps
     } = this.props
 
     const sideOffsetWithUnit = Number.isInteger(sideOffset)
@@ -265,7 +281,8 @@ class Dialog extends React.Component {
         containerProps={{
           display: 'flex',
           alignItems: 'flex-start',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          ...overlayProps
         }}
         preventBodyScrolling={preventBodyScrolling}
       >
@@ -297,11 +314,13 @@ class Dialog extends React.Component {
                 <Heading is="h4" size={600} flex="1">
                   {title}
                 </Heading>
-                <IconButton
-                  appearance="minimal"
-                  icon="cross"
-                  onClick={() => onCancel(close)}
-                />
+                {hasClose && (
+                  <IconButton
+                    appearance="minimal"
+                    icon="cross"
+                    onClick={() => onCancel(close)}
+                  />
+                )}
               </Pane>
             )}
 

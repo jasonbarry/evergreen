@@ -72,9 +72,9 @@ Typing in the text input will filter the list.
 
 ```jsx
 <Combobox
-  defaultSelectedItem={{ label: 'Banana' }}
+  initialSelectedItem={{ label: 'Banana' }}
   items={[{ label: 'Banana' }, { label: 'Pear' }, { label: 'Kiwi' }]}
-  itemToString={item => item.label}
+  itemToString={item => item ? item.label : ''}
   onChange={selected => console.log(selected)}
 />
 ```

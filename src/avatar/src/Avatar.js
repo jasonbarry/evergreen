@@ -1,3 +1,4 @@
+import { css } from 'glamor'
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Box from 'ui-box'
@@ -7,14 +8,18 @@ import { withTheme } from '../../theme'
 import globalGetInitials from './utils/getInitials'
 import globalHash from './utils/hash'
 
-const initialsProps = {
+const isObjectFitSupported =
+  typeof document !== 'undefined' &&
+  'objectFit' in document.documentElement.style
+
+const initialsStyleClass = css({
   top: 0,
   position: 'absolute',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   lineHeight: 1
-}
+}).toString()
 
 class Avatar extends PureComponent {
   static propTypes = {
@@ -136,6 +141,7 @@ class Avatar extends PureComponent {
     if (size <= sizeLimitOneCharacter) {
       initials = initials.substring(0, 1)
     }
+
     const colorProps = this.getColorProps()
 
     return (
@@ -154,7 +160,7 @@ class Avatar extends PureComponent {
       >
         {(imageUnavailable || forceShowInitials) && (
           <Text
-            css={initialsProps}
+            className={initialsStyleClass}
             fontSize={initialsFontSize}
             lineHeight={initialsFontSize}
             width={size}
@@ -166,7 +172,8 @@ class Avatar extends PureComponent {
         )}
         {!imageUnavailable && (
           <Image
-            width="auto"
+            style={{ objectFit: 'cover' }} // Unsupported by ui-box directly
+            width={isObjectFitSupported ? '100%' : 'auto'} // Fallback to old behaviour on IE
             height="100%"
             src={src}
             onError={this.handleError}

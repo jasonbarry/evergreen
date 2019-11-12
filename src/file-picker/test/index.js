@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react'
 import test from 'ava'
 import render from 'react-test-renderer'
@@ -70,6 +69,21 @@ test('calls onChange', t => {
   t.deepEqual(onChange.firstCall.args[0], e.target.files)
 })
 
+test('calls onBlur', t => {
+  const onBlur = sinon.spy()
+  const component = shallow(<FilePicker onBlur={onBlur} />)
+  const e = {
+    target: {
+      files: [{ name: 'data.json' }]
+    }
+  }
+
+  component.find(`.${CLASS_PREFIX}-file-input`).simulate('change', e)
+  component.find(`.${CLASS_PREFIX}-text-input`).simulate('blur')
+  t.true(onBlur.calledOnce)
+  t.deepEqual(component.state().files, e.target.files)
+})
+
 test('handles 1 file selected', t => {
   const component = shallow(<FilePicker />)
   const e = {
@@ -107,4 +121,12 @@ test('clones files array', t => {
   component.find(`.${CLASS_PREFIX}-file-input`).simulate('change', e)
   t.deepEqual(component.state('files'), e.target.files)
   t.not(component.state('files'), e.target.files)
+})
+
+test('sets placeholder', t => {
+  const component = shallow(<FilePicker placeholder="placeholder here!" />)
+  t.is(
+    component.find(`.${CLASS_PREFIX}-text-input`).prop('placeholder'),
+    'placeholder here!'
+  )
 })
