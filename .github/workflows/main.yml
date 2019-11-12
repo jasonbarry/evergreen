@@ -29,10 +29,21 @@ jobs:
           ${{ runner.OS }}-build-
           ${{ runner.OS }}-
 
-    - name: yarn install, build, and ping featurepeek
+    - name: yarn install and build components
       run: |
-        yarn && yarn build
-        cd docs && yarn && yarn build
+        yarn
+        yarn build
+
+    - name: yarn install and build docs
+      run: |
+        cd docs
+        yarn
+        yarn build
+        cd ..
+
+    - name: ping featurepeek
+      run: |
         bash <(curl -s https://peek.run/ci)
+
       env:
         CI: true
