@@ -31,6 +31,7 @@ jobs:
 
     - name: yarn install, build, and ping featurepeek
       run: |
+        yarn
         cd docs && yarn && yarn build
         bash <(curl -s https://peek.run/ci)
       env:
