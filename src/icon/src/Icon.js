@@ -85,10 +85,6 @@ class Icon extends PureComponent {
     const { theme, color, icon, size, title, ...svgProps } = this.props
     let { style = {} } = this.props
 
-    if (icon == null) {
-      return null
-    }
-
     if (typeof icon !== 'string') {
       return icon
     }
